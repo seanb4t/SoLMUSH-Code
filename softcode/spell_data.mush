@@ -1,0 +1,23 @@
+## 
+# depends on datafactory.mush
+# depends on @reference #__factory
+# depends on @reference #__meta
+##
+
+&SPELL_DATA DataFactory=name description tier casttime
+&SPELL_DEF DataFactory=Unnamed Spell`Undescribed Spell`1`1
+&SPELL_FLAGS DataFactory=witch_spell sorcerer_spell 
+&SPELL_LABELS DataFactory=Spell Name`Spell Description`Power Tier`Casting Time
+
+@force me={think
+    [setq(0,
+        create(Spell Data,10)
+    )];
+    &SPELL_OBJ #__meta=%q0
+}
+
+@set Spell Data=halt
+@set Spell Data=safe
+@link spell data=#__meta
+@tel spell data=home
+

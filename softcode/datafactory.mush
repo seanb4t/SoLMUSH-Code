@@ -1,0 +1,183 @@
+###
+#
+# Depends on:
+# @reference _factory
+# @reference _meta
+#
+####
+
+# Call as: u(NEW_FN, owner_dbref, identifier, type)
+# Returns: Nothing.
+# Side-effects:
+#   - Sets identifier.various_fields registers to type defaults.
+#   - Increments the top ID of the type.
+#   - May create a new data object, if we've exceeded a max-IDs breakpoint.
+#
+# %0 - owning player, %1 - string identifier
+# %2 - data structure type, %3 - data object (optional)
+#
+&NEW_FN #__factory=
+[setq(%1.owner,%0)]
+[setq(%1.editor,#-1)]
+[setq(%1.etime,secs())]
+[setq(%1.type,%2)]
+[setq(%1.obj,usetrue(%3,last(setr(lo,get(#__meta/%2_OBJ)))))]
+[setq(%1.id,inc(get(#__meta/%2_TOP)))]
+[set(#__meta,%2_TOP:[r(%1.id)])]
+[nonzero(cand(notbool(%3),
+              setr(ld,v(%2_MAX)),
+              gt(r(%1.id),r(ld)),
+              eq(mod(r(%1.id),r(ld)),0)
+         ),
+  [setq(%1.obj,create([capstr(lcstr(%2))] Data [inc(words(r(lo)))],10))]
+  [set(#__meta,%2_OBJ:[r(lo)] [r(%1.obj)])]
+  [set(r(%1.obj),halt)][set(r(%1.obj),safe)][tel(r(%1.obj),#__meta)]
+)]
+[qvars(iter(v(%2_DATA),%1.##),v(%2_DEF),`)]
+-
+
+# Call as: u(SAVE_FN, identifier, editor_dbref)
+# Returns: Nothing.
+# Side-effects: Saves the entity to an object, as attr type_ID
+#
+# %0 - identifier, %1 - editor
+#
+&SAVE_FN #__factory=
+[case(,
+  r(%0.obj),#-1 NO OBJECT,
+  r(%0.id),#-1 NO ID,
+  set(r(%0.obj),
+    [r(%0.type)]_[r(%0.id)]:
+      [default([r(%0.type)]_V,1)]`[r(%0.owner)]`[usetrue(%1,%#)]`[secs()]`
+      [iter([v([r(%0.type)]_DATA)],edit(r(%0.##),`,'),,`)]
+  )
+)]
+-
+
+# Call as: u(LOAD_FN, identifier, type, ID)
+# Returns: Nothing.
+# Side-effects:
+#   - Success: Sets identifier.various_fields registers to data.
+#   - Failure: Sets identifier.various_fields registers to null.
+#
+# %0 - string identifier, %1 - data structure type, %2 - ID, %3 - data object
+#
+&LOAD_FN #__factory=
+[nonzero(neq(words(setr(lo,usetrue(%3,get(#__meta/%1_OBJ)))),1),
+  setq(lo,extract(r(lo),inc(div(%2,v(%1_MAX))),1))
+)]
+[nonzero(setr(ld,get(r(lo)/%1_%2)),
+  nonzero(qvars(iter(v owner editor etime [v(%1_DATA)],%0.##),r(ld),`),
+    /@@ read failed - wrong data version - upgrade automatically @@/
+    [qvars(iter(v(%1_DATA),%0.##),v(%1_DEF),`)]
+    [qvars(iter(v owner editor etime [v(%1_DATA_[first(r(ld),`)])],%0.##),
+           r(ld),`
+    )]
+  ),
+  /@@ no data, return empty @@/
+  [setq(%0.v,-1)][setq(%0.owner,#-1)][setq(%0.editor,#-1)][setq(%0.etime,-1)]
+  [null(iter(v(%1_DATA),setq(%0.##,)))]
+)]
+[setq(%0.type,%1)][setq(%0.id,%2)][setq(%0.obj,r(lo))]
+-
+
+# Call as: u(OK_LOAD_FN, identifier, type, ID)
+# Returns: 0 if the load failed, and 1 if the load succeeded.
+# Side-effects:
+#   - Success: Sets identifier.various_fields registers to data.
+#   - Failure: Sets identifier.various_fields registers to null.
+#
+# %0 - string identifier, %1 - data structure type, %2 - ID, %3 - data object
+#
+&OK_LOAD_FN #__factory=[u(LOAD_FN,%0,%1,%2,%3)][gt(r(%0.v),0)]
+-
+
+# Call as: u(EXISTS_FN, type, ID)
+# Returns: 0 if ID of type does not exist, and 1 if it does.
+# Side-effects: None.
+#
+# %0 - data structure type, %1 - ID, %2 - data object
+#
+&EXISTS_FN #__factory=
+[nonzero(neq(words(setr(lo,usetrue(%2,get(#__meta/%0_OBJ)))),1),
+  setq(lo,extract(r(lo),inc(div(%2,v(%1_MAX))),1))
+)]
+[hasattr(r(lo),%0_%1)]
+-
+
+# Call as: u(FLAGMOD_FN, identifier, list_of_flags)
+#          list_of_flags can contain flag and !flag lists
+#          This is used to set and unset flags, respectively.
+# Returns: Nothing.
+# Side-effects: Modifies identifier.flags global register.
+#
+# %0 - identifier, %1 - flag list
+#
+&FLAGMOD_FN #__factory=
+[setq(%0._f,v([r(%0.type)]_FLAGS))]
+[setq(%0._d,elements(%1,matchall(%1,!*)))]
+[setq(%0._u,setdiff(%1,r(%0._d)))]
+[nonzero(r(%0._d),
+  setq(%0.flags,
+    bnand(r(%0.flags),
+          ladd(iter(r(%0._d),
+               iftrue(match(r(%0._f),delete(##,0,1)),power(2,dec(#$)),0)))
+    )
+  )
+)]
+[nonzero(r(%0._u),
+  setq(%0.flags,
+    bor(r(%0.flags),
+          ladd(iter(r(%0._d),iftrue(match(r(%0._f),##),power(2,dec(#$)),0)))
+    )
+  )
+)]
+[setq(%0._f,,%0._d,,%0._u,)]
+-
+
+# Call as: u(FLAGGED_FN, identifier, flag_name)
+# Returns: 0 if the entity doesn't have the flag, 1 if it does.
+# Side-effects: None.
+#
+# %0 - identifier, %1 - flag to check for
+#
+&FLAGGED_FN #__factory=
+[iftrue(match(v([r(%0.type)]_FLAGS),%1),
+  band(r(%0.flags),power(2,dec(#$))),
+  0
+)]
+-
+
+# Call as: ulocal(SHOW_FN, identifier)
+# Returns: Displays dump of data for an entity.
+# Side-effects: None intended; call with ulocal(). 
+#
+&SHOW_FN #__factory=
+[setq(f,iter(v([r(%0.type)]_DATA),capstr(##),%b,`))]
+[setq(l,usetrue(v([r(%0.type)]_LABELS),%qf))]
+[nonzero(setr(m,match(%qf,flags,`)),
+  [setq(f,replace(%qf,%qm,flagwords,`))]
+  [setq(%0.flagwords,
+    iter2(setr(b,v([r(%0.type)]_FLAGS)),iter(%qb,power(2,dec(#@))),
+      nonzero(band(r(%0.flags),#+),##)
+    )
+  )]
+)]
+[setq(w,add(2,lmax([strlen([r(%0.type)] ID)] [iter(%ql,strlen(##),`)])))]
+[setq(r,sub(40,%qw))]
+%xb[repeat(-,78)]%xn%r
+[ljust(%xr[capstr(r(%0.type))] ID:%xn,%qw)] [ljust(r(%0.id),%qr)] /@@ @@/
+[ljust(%xrEditor:%xn,11)] [Color(r(%0.editor))]%r
+[ljust(%xrOwner:%xn,%qw)] [ljust(Color(r(%0.owner)),%qr)] /@@ @@/
+[ljust(%xrEdit Time:%xn,11)] [convsecs(r(%0.etime))]%r
+[iter2(%ql,%qf,
+  [ljust(%xr##:%xn,%qw)] [r(%0.#+)],
+  `,%r
+)]%r
+[nonzero(r(%0.show),
+  %xb[repeat(=,78)]%xn%r[r(%0.show)]%r
+)]
+%xb[repeat(-,78)]%xn
+-
+
+
