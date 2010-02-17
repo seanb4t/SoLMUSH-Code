@@ -1,0 +1,35 @@
+##
+# Call as: u(#__global_funcs/fun_is_staff,player)
+# Or use registered @function isstaff
+##
+&fun_is_staff #__global_funcs=[
+    hasflag(%0,Wizard)
+#   Authorized(#__global_data/staff_list,%0)
+]
+-
+
+##
+# Call as: u(#__global_funcs/fun_is_player,player)
+# Or use registered @function isplayer
+##
+&fun_is_player #__global_funcs=[
+    case(1,
+        isdbref(setr(f.ip.pl,locate(%#,%0,amnpP))),
+            hasflag(r(f.ip.pl),PLAYER),
+        setr(f.ip.res,uprivate(fun_is_player,*%0)),
+            r(f.ip.res),
+        0)
+]
+-
+
+##
+# Call as: u(#__global_funcs/fun_resolve_player,player)
+# Or use registered @function resolve_player
+##
+&fun_resolve_player #__global_funcs=[
+    case(1,
+        isplayer(%0),
+            locate(%#,%0,amnpP),
+        #-1)
+]
+-
