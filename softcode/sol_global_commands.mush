@@ -9,3 +9,7 @@
 -
 @set #__globals/cmd_ooc = regexp
 -
+@fo me=&cmds_list #8=[sort(setunion(xget(#8,cmds_list),ooc))]
+-
+&HELP_OOC #8=The '[ansi(c,ooc)]' command sends a message to other players in your room, prefixed with <<OOC>>. Poses are possible by prefixing your message with either ':' or ';'.
+-
