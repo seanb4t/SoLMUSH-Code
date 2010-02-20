@@ -167,8 +167,8 @@
 [setq(r,sub(40,%qw))]
 %xb[repeat(-,78)]%xn%r
 [ljust(%xr[capstr(r(%0.type))] ID:%xn,%qw)] [ljust(r(%0.id),%qr)] /@@ @@/
-[ljust(%xrEditor:%xn,11)] [Color(r(%0.editor))]%r
-[ljust(%xrOwner:%xn,%qw)] [ljust(Color(r(%0.owner)),%qr)] /@@ @@/
+[ljust(%xrEditor:%xn,11)] [Color_Player_By_Idle(r(%0.editor))]%r
+[ljust(%xrOwner:%xn,%qw)] [ljust(Color_Player_By_Idle(r(%0.owner)),%qr)] /@@ @@/
 [ljust(%xrEdit Time:%xn,11)] [convsecs(r(%0.etime))]%r
 [iter2(%ql,%qf,
   [ljust(%xr##:%xn,%qw)] [r(%0.#+)],
@@ -180,4 +180,49 @@
 %xb[repeat(-,78)]%xn
 -
 
+##
+# Command: +spell/create spell_name=spell_description
+##
+&DO_SPELL_CREATE #__globals=
+    $+spell/create *=*:
+        @pemit %#=[
+            case(0,
+                isstaff(%#),Only staff may create spells.,
+                [u(NEW_FN,num(*wizard),this,spell)]
+                [setq(this.name,%0)]
+                [setq(this.description,%1)]
+                [u(SAVE_FN,this,%#)]
+                New spell created: [ansi(c,%0)] - Spell ID: [r(this.id)]
+                )]
+-
 
+##
+# Command: +spell/show spell_id
+##
+&DO_SPELL_SHOW #__globals=
+    $+spell/show *:
+        @pemit %#=[
+            case(0,
+                u(OK_LOAD_FN,this,spell,%0),That is not a valid ship ID.,
+                u(SHOW_FN,this)
+            )]
+-
+
+##
+# Command: +spell/flag (!)witch_spell|(!)sorcerer_spell
+##
+&DO_SPELL_FLAG #__globals=
+    $^\+spell/flag (.+)=((!)?(witch|sorcerer)_spell)$:
+        @pemit %#=[
+            case(0,
+                isstaff(%#),Only staff can change the flags of a spell.,
+                u(OK_LOAD_FN,this,spell,%1),That is not a valid spell ID.,
+                u(FLAGGED_FN,this,%2),The spell already is set: %2,
+                [u(FLAGMOD_FN,this,%2)]
+                Flags: [r(this.flags)]%b%r
+                [u(SAVE_FN,this,%#)]
+                You adjust the flags on spell: %xc[r(this.name)]%xn(%xb[r(this.id)]%xn)
+            )]
+-
+@set #__globals/do_spell_flag=regex
+-
