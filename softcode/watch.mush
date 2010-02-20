@@ -1,0 +1,159 @@
+@@ This is based off the +watch code by 
+@@ This is a nice bit of global code. It's a +watch system, for watching players log on and off.
+@@ It has standards in place for dealing with people who don't want to be watched, and staff.
+@@ This was cleaned up by a friend of mine who was code-staff at Denver By Night WoD MUSH. 
+@@ The credits have been left intact :).
+@@
+-
+
+@create Global +Watch Object=10
+-
+
+@lock Global +Watch Object=me | !me
+-
+
+&DO.ADDWATCHER Global +Watch Object=
+    $+watch/add *:@swi [type(*%0)]=
+        PLAYER,{
+            &friends %#=[setunion(get(%#/friends),num(*%0))];
+            @pemit %#=<Watch> You have added [name(*%0)] to your watch list.
+        }
+        ,{
+            @pemit %#=<Watch> Sorry, %0 isn't a player.
+        }
+-
+
+&DO.DELWATCHER Global +Watch Object=
+    $+watch/del *:
+        &friends %#=[remove(get(%#/friends),num(*%0))];
+        @pemit %#=<Watch> You have removed [Name(*%0)] from your watch list.
+-
+
+&DO.HIDEWATCHER Global +Watch Object=
+    $+watch/hide:
+        &NOWATCH me=[setunion(v(NOWATCH),num(%#))];
+        @pemit %#=<Watch> You are now hiding from the Watcher code.
+-
+
+&DO.UNHIDEWATCHER Global +Watch Object=
+    $+watch/unhide:
+        &NOWATCH me=[remove(get(me/NOWATCH),%#)];
+        @pemit %#=<Watch> Your login and logouts may now be monitored.
+-
+
+&DO.WATCH Global +Watch Object=
+    $+watch:
+        @pemit %#=<Watch> Watched players currently connected: [switch(words(setr(0,squish(iter(setinter(u(%#/friends),objeval(%#,lwho())),[switch(and(andflags(##,Pc),not(member(u(NOWATCH),##))),1,[name(##)]%,,)])))),0,None,mid(r(0),0,sub(strlen(%q0),1)))]
+-
+
+@Adisconnect Global +Watch Object=
+    @dolist [lwho()]={@switch/first [hasflag(%#,DARK)]:[not(u(##/WATCHON))]:[udefault(##/watchall,0)]:[gt(match(u(##/friends),%#),0)]:[gt(match(u(NOWATCH),%#),0)]:[gt(match(u(%#/watchpermit),# #),0)]=0:1:1:*:0:*, {@pemit ##=[udefault(##/watchfmt,<Watch> [name(%#)](%#) has disconnected.,disconnected)]},0:1:0:1:0:*,{@pemit ##=[udefault(##/watchfmt,<Watch> [name(%#)](%#) has disconnected.,disconnected)]},0:1:0:1:1:1,{@pemit ##=[udefault(##/watchfmt,<Watch> [name(%#)](%#) has disconnected.,disconnected)]},}
+-
+
+@Aconnect Global +Watch Object=
+    @dolist [lwho()]={@switch/first [hasflag(%#,DARK)]:[not(u(##/WATCHON))]:[udefault(##/watchall,0)]:[gt(match(u(##/friends),%#),0)]:[gt(match(u(NOWATCH),%#),0)]:[gt(match(u(%#/watchpermit),# #),0)]=0:1:1:*:0:*, {@pemit ##=[udefault(##/watchfmt,<Watch> [name(%#)] has connected.,connected)]},0:1:0:1:0:*,{@pemit ##=[udefault(##/watchfmt,<Watch> [name(%#)] has connected.,connected)]},0:1:0:1:1:1,{@pemit ##=[udefault(##/watchfmt,<Watch> [name(%#)] has connected.,connected)]},};
+    
+-
+
+&DO.WHOWATCHER Global +Watch Object=
+    $+watch/who:
+        @pemit %#=<Watch> You are currently watching for [iter(u(%#/friends),{switch(type(##),PLAYER,{%r%t- [name(##)](##)[repeat(.,sub(28,add(strlen(name(##)),strlen(##))))][switch(hasflag(##,connected),1,Online,Offline)]})})]
+
+-
+
+&DO.HELPWATCHER Global +Watch Object=
+    $+watch/help:
+        @pemit %#=<Watch> The following are commands available for +watch:
+            %r%r+watch [space(11)]-- shows you who is connected that you are watching.
+            %r+watch/on <default>- turns on the watch code after it has been turned off.
+            %r+watch/off [space(7)]-- turns off the Watch without removing your list.
+            %r+watch/who [space(7)]-- displays everyone on your watch list and connect status.
+            %r+watch/hide [space(6)]-- hides you from the +watch.
+            %r+watch/unhide [space(4)]-- allows others to watch your logins and disconnects.
+            %r+watch/per <name> -- permits <name> to see you while hiding.
+            %r+watch/rem <name> -- removes <name> from seeing you while hiding.
+            %r+watch/add <name>[space(1)]-- adds <name> to your watch list.
+            %r+watch/del <name>[space(1)]-- removes <name> from your watch list.
+            %r+watch/page <message> -- sends <message> as a page to those on your watch list.
+            %r+watch/all on [space(4)]-- allows you to watch all logins and disconnects.
+            %r+watch/all off [space(3)]-- prevents you from watching all logins and disconnects.
+            %r%rYou may also set the format by which you see logins and disconnects. To do this, set &WATCHFMT me=%%n has %%0. Other useful commands you might add could be %[time()], %%# or whatever.
+            %r%rAlso, you may set an AWATCH attribute on yourself that will be triggered when someone logs in.
+            %r%r<Watch> +watch was coded by Alton/Cedric@Tir Rauhd and Watchman@Haven. It may be copied freely.
+
+-
+
+&DO.ALLWATCHER Global +Watch Object=
+    $+watch/all *:
+        @swi %0=
+            ON,{
+                &watchall %#=1;
+                @pemit %#=<Watch> You are now watching all logins and disconnects.
+            },{
+                &watchall %#;
+                @pemit %#=<Watch> You are no longer watching all logins and disconnects.
+            }
+-
+
+&DO.PERMITWATCH Global +Watch Object=
+    $+watch/per *:
+        @swi [type(*%0)]=
+            PLAYER,{
+                &watchpermit %#=[setunion(get(%#/watchpermit),num(*%0))];
+                @pemit %#=<Watch> You have added [name(*{%0})] to your permission list, 
+                    %rfor when you are hidden from the watch command.
+            },{
+                @pemit %#=<Watch> Sorry, %0 isn't a player.
+            }
+-
+
+&DO.UNPERMWATCH Global +Watch Object=
+    $+watch/rem *:&watchpermit %#=[remove(get(%#/watchpermit),num(*%0))];
+    @pemit %#=<Watch> You have removed [name(*%0)] from your hidden permission list.
+-
+
+&FN.WATCHALERT Global +Watch Object=@pemit %1=[udefault(%1/friends,<Watch> [name(%0)](%0) has connected.,connected)];
+    @trig/quiet %0/awatch=[name(%1)], %1
+-
+
+&DO.WPAGE Global +Watch Object=
+    $+watch/page *:@dolist get(%#/friends)=@switch objeval(%#,hasflag(##,connect))=1,{@fo %#=page ##={%0}},0,
+-
+
+&DO.WATCHON Global +Watch Object=
+    $+watch/on:@pemit %#=<Watch> Watcher code is now turned on.;
+    &WATCHON %#=0
+-
+
+&DO.WATCHOFF Global +Watch Object=
+    $+watch/off:@pemit %#=<Watch> Watcher code is now turned off.;
+    &watchon %#=1
+-
+
+&DO.HELPWATCHER Global +Watch Object=
+    $+watch/help:@pemit %#=%xh%xrWatch>%xn The following are commands available for +watch:%r%r+watch [space(11)]-- shows you who is connected that you are watching.%r+watch/on <default>- turns on the watch code after it has been turned off.%r+watch/off [space(7)]-- turns off the Watch without removing your list.%r+watch/who [space(7)]-- displays everyone on your watch list and connect status.%r+watch/hide [space(6)]-- hides you from the +watch.%r+watch/unhide [space(4)]-- allows others to watch your logins and disconnects.%r+watch/per <name> -- permits <name> to see you while hiding.%r+watch/rem <name> -- removes <name> from seeing you while hiding.%r+watch/add <name>[space(1)]-- adds <name> to your watch list.%r+watch/del <name>[space(1)]-- removes <name> from your watch list.%r+watch/page <message> -- sends <message> as a page to those on your watch list.%r+watch/all on [space(4)]-- allows you to watch all logins and disconnects.%r+watch/all off [space(3)]-- prevents you from watching all logins and disconnects.%r%rYou may also set the format by which you see logins and disconnects. To do this, set &WATCHFMT me=%%n has %%0. Other useful commands you might add could be %[time()], %%# or whatever.%r%rAlso, you may set an AWATCH attribute on yourself that will be triggered when someone logs in.%r%r%xh%xrWatch>%xn +watch was coded by Alton/Cedric@Tir Rauhd and Watchman@Haven. It was debugged and improved by Pennance@DenverMUSH. It may be copied freely.
+
+-
+
+&CREDITS Global +Watch Object=+watch was coded by Alton/Cedric@Tir Rauhd and Watchman@Haven. It was debugged and improved by Pennance@DenverMUSH. It may be copied freely.
+-
+
+&NOWATCH Global +Watch Object=#1
+-
+
+@set Global +Watch Object=INHERIT
+-
+
+@set Global +Watch Object=STICKY
+-
+
+@set Global +Watch Object=SAFE
+-
+
+@set Global +Watch Object=COMMANDS
+-
+&help_watch #8='[ansi(c,+watch)]' allows for watching logins/logoffs of friends. Please see [ansi(c,+watch/help)]
+-
+@fo me=&cmds_list #8=[sort(setunion(xget(#8,cmds_list),+watch))]
+-
+
