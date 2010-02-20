@@ -28,8 +28,141 @@
 ##
 &fun_resolve_player #__global_funcs=[
     case(1,
-        isplayer(%0),
-            locate(%#,%0,amnpP),
+        isdbref(setr(f.rp.pl,locate(%#,%0,amnpP))),
+        r(f.rp.pl),
+        isdbref(setr(f.rp.pl,uprivate(fun_resolve_player,*%0))),
+        r(f.rp.pl),
         #-1)
+]
+-
+
+
+##
+# Call as: AFK()
+##
+&fun_afk #__global_funcs=[
+    
+]
+-
+
+##
+# Call as u(#__global_funcs/fun_clr_by_idle_tm,player)
+##
+&fun_clr_by_idle_tm #__global_funcs=[
+    case(1,
+        isplayer(%0),
+            [setq(f.cba.p,resolve_player(%0))]
+            [setq(f.cba.pn,name(r(f.cba.p)))]
+            [setq(f.cba.i,idle(r(f.cba.p)))]
+            [ifelse(
+                lte(r(f.cba.i),5),
+                r(f.cba.pn)
+            )]
+            [ifelse(
+                and(
+                    lte(r(f.cba.i),15),
+                    gt(r(f.cba.i),5)
+                ),
+                ansi(y,r(f.cba.pn))
+            )]
+            [ifelse(
+                gt(r(f.cba.i),15),
+                ansi(r,r(f.cba.pn))
+            )]
+            ,
+        #-1)
+]
+-
+
+##
+# Call as u(#__global_funcs/fun_clr_by_status,player)
+##
+&fun_clr_by_status #__global_funcs=[
+    case(1,
+        isplayer(%0),
+            [setq(f.cba.p,resolve_player(%0))]
+            [setq(f.cba.pn,name(r(f.cba.p)))]
+            [case(1,
+                [ifelse(
+                    or(
+                        hasflag(loc(r(f.cba.p)),_PUBLIC),
+                        hasflag(r(f.cba.p),_IC)
+                    ),
+                    1[setq(f.cba.res,setunion(r(f.cba.res),c))]
+                )],
+                [ifelse(
+                    not(or(
+                        hasflag(loc(r(f.cba.p)),_PUBLIC),
+                        hasflag(r(f.cba.p),_IC)
+                    )),
+                    1[setq(f.cba.res,setunion(r(f.cba.res),g))]
+                )]
+            )]
+            [ifelse(hasattr(r(f.cba.p),idle),setq(f.cba.res,setunion(r(f.cba.res),u)))]
+            [ifelse(hasflag(r(f.cba.p),STAFF),setq(f.cba.res,setunion(r(f.cba.res),m)))]
+            [ansi(regeditall(r(f.cba.res),%\s+,),r(f.cba.pn))]
+            ,
+        #-1)
+]
+-
+
+##
+# Call as u(#__global_funcs/fun_who_clr_idle,idle_time)
+##
+&fun_who_clr_idle #__global_funcs=[
+        [ifelse(lte(%0,300),n)]
+        [ifelse(
+            and(gt(%0,300),lte(%0,900)),
+            y
+        )]
+        [ifelse(gt(%0,900),r)]
+]
+-
+
+##
+# Call as u(#__global_funcs/fun_who_repl_format)
+##
+&fun_who_repl_format #__global_funcs=
+    %r[ljust(u(fun_clr_by_status,%0),20)]
+    [u(who_onfor_fn,conn(%0))]
+    [u(who_idle_fn,idle(%0))]
+-
+
+##
+# Call as u(#__global_funcs/fun_who_repl_header)
+##
+&fun_who_repl_header #__global_funcs=
+    Player Name
+    [space(8)]
+    On For
+    [space(1)]
+    Idle
+    [space(3)]
+    Doing
+-
+
+##
+# Call as u(#__global_funcs/fun_who_repl_footer)
+##
+&fun_who_repl_footer #__global_funcs=
+    %r
+    [words(setr(f.wrf.lwho,objeval(%#,lwho())))]%b
+    [case(1,
+        [r(f.wrf.lwho)],
+            Player,
+        Players
+    )] logged in,%b
+    XX record,%b
+    [switch(config(max_players),-1,no,#$)] maximum.
+
+-
+
+##
+# Call as u(#__global_Funcs/fun_who_repl)
+##
+&fun_who_repl #__global_funcs=[
+    [u(fun_who_repl_header)]
+    [iter(objeval(%#,lwho()),u(fun_who_repl_format,##))]
+    [u(fun_who_repl_footer)]
 ]
 -
