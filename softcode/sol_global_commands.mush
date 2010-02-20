@@ -1,0 +1,11 @@
+##
+# Depends on: #__globals
+##
+
+##
+# ooc emit/pose/say command
+##
+&CMD_OOC #__globals=$^ooc ([\:;]?)(.+):@femit/spoof %#=[u(#__global_funcs/FUN_OOC_FMT,%#,%1,%2)]
+-
+@set #__globals/cmd_ooc = regexp
+-

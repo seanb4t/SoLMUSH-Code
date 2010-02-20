@@ -166,3 +166,16 @@
     [u(fun_who_repl_footer)]
 ]
 -
+
+##
+# Call as u(#__global_funcs/fun_ooc_fmt) 
+##
+&fun_ooc_fmt #__global_funcs=
+    [ansi(b,<<)][ansi(y,OOC)][ansi(b,>>)]%b
+    [name(%#)]
+    [case(%1,
+        :,%b%2,
+        ;,%2,
+        ,%bsays\, "%2"
+    )]
+-
