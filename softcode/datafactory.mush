@@ -141,12 +141,22 @@
 #
 # %0 - identifier, %1 - flag_name
 #
-&FLAGMERGE_FN #__factory=
+&FLAGMERGE_FN #__factory=[localize(
+[setq(%0.flagwords,
+  iter2(setr(b,v([r(%0.type)]_FLAGS)),iter(%qb,power(2,dec(#@))),
+    nonzero(band(r(%0.flags),#+),##)
+  )
+)]
 [setq(%0._f,v([r(%0.type)]_FLAGS))]
-[setq(%0._d,matchall(%1,!*))]
+[iter(
+  setdiff(r(%0._f),r(%0.flagwords)),
+  iftrue(match(r(%0._f),##),setq(%0._f,lreplace(r(%0._f),!##,#$)))
+)]
+[setq(%0._d,
+    iter(r(%0._f),nonzero(matchall(%1,!##),#@))
+)]
 [nonzero(r(%0._d),lreplace(r(%0._f),%1,r(%0._d)),setunion(r(%0._f),%1))]
-[setq(%0._f,,%0._d,)]
-
+)]
 -
 
 # Call as: u(FLAGGED_FN, identifier, flag_name)
@@ -169,13 +179,10 @@
 &SHOW_FN #__factory=
 [setq(f,iter(v([r(%0.type)]_DATA),capstr(##),%b,`))]
 [setq(l,usetrue(v([r(%0.type)]_LABELS),%qf))]
-[nonzero(setr(m,match(%qf,flags,`)),
-  [setq(f,replace(%qf,%qm,flagwords,`))]
-  [setq(%0.flagwords,
-    iter2(setr(b,v([r(%0.type)]_FLAGS)),iter(%qb,power(2,dec(#@))),
-      nonzero(band(r(%0.flags),#+),##)
-    )
-  )]
+[setq(%0.flagwords,
+  iter2(setr(b,v([r(%0.type)]_FLAGS)),iter(%qb,power(2,dec(#@))),
+    nonzero(band(r(%0.flags),#+),##)
+  )
 )]
 [setq(w,add(2,lmax([strlen([r(%0.type)] ID)] [iter(%ql,strlen(##),`)])))]
 [setq(r,sub(40,%qw))]
@@ -184,6 +191,7 @@
 [ljust(%xrEditor:%xn,11)] [Color_Player_By_Idle(r(%0.editor))]%r
 [ljust(%xrOwner:%xn,%qw)] [ljust(Color_Player_By_Idle(r(%0.owner)),%qr)] /@@ @@/
 [ljust(%xrEdit Time:%xn,11)] [convsecs(r(%0.etime))]%r
+[ljust(%xrFlags:%xn,%qw)] [r(%0.flagwords)]%r
 [iter2(%ql,%qf,
   [ljust(%xr##:%xn,%qw)] [r(%0.#+)],
   `,%r
@@ -192,6 +200,31 @@
   %xb[repeat(=,78)]%xn%r[r(%0.show)]%r
 )]
 %xb[repeat(-,78)]%xn
+-
+
+# Call as: ulocal(LIST_FN, type)
+# Returns: Displays a list of all entities for type
+# Side-effects: None.
+# 
+# %0 - type
+#
+&LIST_FN #__factory=[localize(
+[setq(n,get(#__meta/%0_TOP))]
+[setq(l,lnum(1,%qn))]
+
+%xb[repeat(=,78)]%xn%r
+%xr[center(capstr(lcstr(%0)) List,78)]%xn%r
+%xb[repeat(=,78)]%xn%r
+%xr[ljust(ID,5)][ljust(Name,66)][ljust(W,4)][ljust(S,4)]%xn%r
+%xb[repeat(.,78)]%xn%r
+[iter(%ql,
+  [u(LOAD_FN,this,%0,##)]
+  [setq(w,nonzero(u(FLAGGED_FN,this,witch_spell),Y,N))]
+  [setq(s,nonzero(u(FLAGGED_FN,this,sorcerer_spell),Y,N))]
+  %xw[ljust(r(this.id),4)]%b[ljust(r(this.name),66)][ljust(%qw,4)][ljust(%qs,4)]%xn,,%r
+)]
+%r%xb[repeat(-,78)]%xn%r
+)]
 -
 
 ##
@@ -203,8 +236,8 @@
             case(0,
                 isstaff(%#),Only staff may create spells.,
                 [u(NEW_FN,num(*wizard),this,spell)]
-                [setq(this.name,%0)]
-                [setq(this.description,%1)]
+                [setq(this.name,trim(%0))]
+                [setq(this.description,trim(%1))]
                 [u(FLAGMOD_FN,this,witch_spell sorcerer_spell)]
                 [u(SAVE_FN,this,%#)]
                 New spell created: [ansi(c,%0)] - Spell ID: [r(this.id)]
@@ -239,3 +272,10 @@
 -
 @set #__globals/do_spell_flag=regex
 -
+##
+# Command: +spells
+##
+&DO_SPELLS #__globals=
+    $+spells:@pemit %#=[u(LIST_FN,spell)]
+-
+
