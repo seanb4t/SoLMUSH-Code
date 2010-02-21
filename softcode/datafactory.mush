@@ -48,7 +48,7 @@
   r(%0.id),#-1 NO ID,
   set(r(%0.obj),
     [r(%0.type)]_[r(%0.id)]:
-      [default([r(%0.type)]_V,1)]`[r(%0.owner)]`[usetrue(%1,%#)]`[secs()]`
+      [default([r(%0.type)]_V,1)]`[r(%0.owner)]`[usetrue(%1,%#)]`[secs()]`[r(%0.flags)]`
       [iter([v([r(%0.type)]_DATA)],edit(r(%0.##),`,'),,`)]
   )
 )]
@@ -67,15 +67,15 @@
   setq(lo,extract(r(lo),inc(div(%2,v(%1_MAX))),1))
 )]
 [nonzero(setr(ld,get(r(lo)/%1_%2)),
-  nonzero(qvars(iter(v owner editor etime [v(%1_DATA)],%0.##),r(ld),`),
+  nonzero(qvars(iter(v owner editor etime flags [v(%1_DATA)],%0.##),r(ld),`),
     /@@ read failed - wrong data version - upgrade automatically @@/
     [qvars(iter(v(%1_DATA),%0.##),v(%1_DEF),`)]
-    [qvars(iter(v owner editor etime [v(%1_DATA_[first(r(ld),`)])],%0.##),
+    [qvars(iter(v owner editor etime flags [v(%1_DATA_[first(r(ld),`)])],%0.##),
            r(ld),`
     )]
   ),
   /@@ no data, return empty @@/
-  [setq(%0.v,-1)][setq(%0.owner,#-1)][setq(%0.editor,#-1)][setq(%0.etime,-1)]
+  [setq(%0.v,-1)][setq(%0.owner,#-1)][setq(%0.editor,#-1)][setq(%0.etime,-1)][setq(%0.flags,-1)]
   [null(iter(v(%1_DATA),setq(%0.##,)))]
 )]
 [setq(%0.type,%1)][setq(%0.id,%2)][setq(%0.obj,r(lo))]
@@ -128,11 +128,25 @@
 [nonzero(r(%0._u),
   setq(%0.flags,
     bor(r(%0.flags),
-          ladd(iter(r(%0._d),iftrue(match(r(%0._f),##),power(2,dec(#$)),0)))
+          ladd(iter(r(%0._u),iftrue(match(r(%0._f),##),power(2,dec(#$)),0)))
     )
   )
 )]
 [setq(%0._f,,%0._d,,%0._u,)]
+-
+
+# Call as: u(FLAGMERG_FN, identifier, flag_name)
+# Returns: Merged flag list ( flag_name with optional ! + rest of flags )
+# Side-effects: None
+#
+# %0 - identifier, %1 - flag_name
+#
+&FLAGMERGE_FN #__factory=
+[setq(%0._f,v([r(%0.type)]_FLAGS))]
+[setq(%0._d,matchall(%1,!*))]
+[nonzero(r(%0._d),lreplace(r(%0._f),%1,r(%0._d)),setunion(r(%0._f),%1))]
+[setq(%0._f,,%0._d,)]
+
 -
 
 # Call as: u(FLAGGED_FN, identifier, flag_name)
@@ -191,6 +205,7 @@
                 [u(NEW_FN,num(*wizard),this,spell)]
                 [setq(this.name,%0)]
                 [setq(this.description,%1)]
+                [u(FLAGMOD_FN,this,witch_spell sorcerer_spell)]
                 [u(SAVE_FN,this,%#)]
                 New spell created: [ansi(c,%0)] - Spell ID: [r(this.id)]
                 )]
@@ -217,9 +232,7 @@
             case(0,
                 isstaff(%#),Only staff can change the flags of a spell.,
                 u(OK_LOAD_FN,this,spell,%1),That is not a valid spell ID.,
-                u(FLAGGED_FN,this,%2),The spell already is set: %2,
-                [u(FLAGMOD_FN,this,%2)]
-                Flags: [r(this.flags)]%b%r
+                [u(FLAGMOD_FN,this,u(FLAGMERGE_FN,this,%2))]
                 [u(SAVE_FN,this,%#)]
                 You adjust the flags on spell: %xc[r(this.name)]%xn(%xb[r(this.id)]%xn)
             )]
