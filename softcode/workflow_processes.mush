@@ -1,234 +1,234 @@
-@@create Workflow Processes=10
+@@create #__workflow_data=10
+@@-
+@@set #__workflow_data=HALTED
+@@-
+@@set #__workflow_data=SAFE
+@@-
+&ROLE_CODESTAFF #__workflow_data=#3 #106
 -
-@@set Workflow Processes=HALTED
+&ROLE_TYPO #__workflow_data=#3 #107
 -
-@@set Workflow Processes=SAFE
--
-&ROLE_CODESTAFF Workflow Processes=#3 #106
--
-&ROLE_TYPO Workflow Processes=#3 #107
--
-&ROLE_GM Workflow Processes=#3 #107 #106
+&ROLE_GM #__workflow_data=#3 #107 #106
 
 
 ##
 # BUG
 ##
-&NT_BUG_CLARIFY_ASSIGN Workflow Processes=role:codestaff
+&NT_BUG_CLARIFY_ASSIGN #__workflow_data=role:codestaff
 -
-&NT_BUG_CLARIFY_COMMENT Workflow Processes=Submit clarification to a bug report
+&NT_BUG_CLARIFY_COMMENT #__workflow_data=Submit clarification to a bug report
 -
-&NT_BUG_CLARIFY_DUE Workflow Processes=604800
+&NT_BUG_CLARIFY_DUE #__workflow_data=604800
 -
-&NT_BUG_CLARIFY_IACK Workflow Processes=Bug report clarified.
+&NT_BUG_CLARIFY_IACK #__workflow_data=Bug report clarified.
 -
-&NT_BUG_CLARIFY_NEXT Workflow Processes=ok:WILLFIX fix:FIXED huh:HUH nofix:NOFIX notbug:NOTBUG norepr:NOREPR
+&NT_BUG_CLARIFY_NEXT #__workflow_data=ok:WILLFIX fix:FIXED huh:HUH nofix:NOFIX notbug:NOTBUG norepr:NOREPR
 -
-&NT_BUG_CLARIFY_TASKDESC Workflow Processes=[name($player)] has clarified the bug report.%r%r+do/ok $tid: acknowledge and queue for fix%r+doreply/huh $tid=<comment>: bounce back to submitting player for clarification%r+do/nofix $tid: reject as a no-fix%r+do/notbug $tid: reject as not a bug%r+do/norepr $tid: reject as non-reproducible
+&NT_BUG_CLARIFY_TASKDESC #__workflow_data=[name($player)] has clarified the bug report.%r%r+do/ok $tid: acknowledge and queue for fix%r+doreply/huh $tid=<comment>: bounce back to submitting player for clarification%r+do/nofix $tid: reject as a no-fix%r+do/notbug $tid: reject as not a bug%r+do/norepr $tid: reject as non-reproducible
 -
-&NT_BUG_CLARIFY_TASKNAME Workflow Processes=Bug clarification
+&NT_BUG_CLARIFY_TASKNAME #__workflow_data=Bug clarification
 -
-&NT_BUG_FIXED_COMMENT Workflow Processes=Fixed bug
+&NT_BUG_FIXED_COMMENT #__workflow_data=Fixed bug
 -
-&NT_BUG_FIXED_IACK Workflow Processes=Bug closed as fixed.
+&NT_BUG_FIXED_IACK #__workflow_data=Bug closed as fixed.
 -
-&NT_BUG_FIXED_TASKDESC Workflow Processes=[name($actor)] has closed this bug.
+&NT_BUG_FIXED_TASKDESC #__workflow_data=[name($actor)] has closed this bug.
 -
-&NT_BUG_FIXED_TASKNAME Workflow Processes=Fixed
+&NT_BUG_FIXED_TASKNAME #__workflow_data=Fixed
 -
-&NT_BUG_HUH_COMMENT Workflow Processes=Bounce bug report back to submitter for clarification
+&NT_BUG_HUH_COMMENT #__workflow_data=Bounce bug report back to submitter for clarification
 -
-&NT_BUG_HUH_DUE Workflow Processes=604800
+&NT_BUG_HUH_DUE #__workflow_data=604800
 -
-&NT_BUG_HUH_IACK Workflow Processes=Bug report clarification requested from [name($player)].
+&NT_BUG_HUH_IACK #__workflow_data=Bug report clarification requested from [name($player)].
 -
-&NT_BUG_HUH_IMBODY Workflow Processes=[name($actor)] has requested more detail about a bug that you reported.%rUse '+job $pid' to view the details.%rReply with '+do/clarify $tid=<clarification>'.%r[repeat(-,78)]%rYour original bug report:%r$bug%r[repeat(-,78)]%r[name($actor)]'s reply:%r$comment
+&NT_BUG_HUH_IMBODY #__workflow_data=[name($actor)] has requested more detail about a bug that you reported.%rUse '+job $pid' to view the details.%rReply with '+do/clarify $tid=<clarification>'.%r[repeat(-,78)]%rYour original bug report:%r$bug%r[repeat(-,78)]%r[name($actor)]'s reply:%r$comment
 -
-&NT_BUG_HUH_IMSUBJ Workflow Processes=Bug report clarification request
+&NT_BUG_HUH_IMSUBJ #__workflow_data=Bug report clarification request
 -
-&NT_BUG_HUH_NEXT Workflow Processes=clarify:CLARIFY
+&NT_BUG_HUH_NEXT #__workflow_data=clarify:CLARIFY
 -
-&NT_BUG_HUH_TASKDESC Workflow Processes=[name($actor)] has requested clarification for the bug submitted as job $pid.%r%rUse '+doreply/clarify $tid=<clarification>' to reply.%r[repeat(-,78)]%r$bug
+&NT_BUG_HUH_TASKDESC #__workflow_data=[name($actor)] has requested clarification for the bug submitted as job $pid.%r%rUse '+doreply/clarify $tid=<clarification>' to reply.%r[repeat(-,78)]%r$bug
 -
-&NT_BUG_HUH_TASKNAME Workflow Processes=Bug clarification needed from [name($player)] by [name($actor)]
+&NT_BUG_HUH_TASKNAME #__workflow_data=Bug clarification needed from [name($player)] by [name($actor)]
 -
-&NT_BUG_NOFIX_COMMENT Workflow Processes=Rejected bug report as a no-fix
+&NT_BUG_NOFIX_COMMENT #__workflow_data=Rejected bug report as a no-fix
 -
-&NT_BUG_NOFIX_IACK Workflow Processes=Bug report rejected as a no-fix.
+&NT_BUG_NOFIX_IACK #__workflow_data=Bug report rejected as a no-fix.
 -
-&NT_BUG_NOFIX_TASKDESC Workflow Processes=[name($actor)] has closed this bug.
+&NT_BUG_NOFIX_TASKDESC #__workflow_data=[name($actor)] has closed this bug.
 -
-&NT_BUG_NOFIX_TASKNAME Workflow Processes=No-fix
+&NT_BUG_NOFIX_TASKNAME #__workflow_data=No-fix
 -
-&NT_BUG_NOREPR_COMMENT Workflow Processes=Rejected bug report as non-repoducible
+&NT_BUG_NOREPR_COMMENT #__workflow_data=Rejected bug report as non-repoducible
 -
-&NT_BUG_NOREPR_IACK Workflow Processes=Bug report rejected as non-reproducible.
+&NT_BUG_NOREPR_IACK #__workflow_data=Bug report rejected as non-reproducible.
 -
-&NT_BUG_NOREPR_TASKDESC Workflow Processes=[name($actor)] has closed this bug.
+&NT_BUG_NOREPR_TASKDESC #__workflow_data=[name($actor)] has closed this bug.
 -
-&NT_BUG_NOREPR_TASKNAME Workflow Processes=Cannot reproduce
+&NT_BUG_NOREPR_TASKNAME #__workflow_data=Cannot reproduce
 -
-&NT_BUG_NOTBUG_COMMENT Workflow Processes=Rejected bug report as not a bug
+&NT_BUG_NOTBUG_COMMENT #__workflow_data=Rejected bug report as not a bug
 -
-&NT_BUG_NOTBUG_IACK Workflow Processes=Bug report rejected as not actually a bug.
+&NT_BUG_NOTBUG_IACK #__workflow_data=Bug report rejected as not actually a bug.
 -
-&NT_BUG_NOTBUG_TASKDESC Workflow Processes=[name($actor)] has closed this bug.
+&NT_BUG_NOTBUG_TASKDESC #__workflow_data=[name($actor)] has closed this bug.
 -
-&NT_BUG_NOTBUG_TASKNAME Workflow Processes=Not a bug
+&NT_BUG_NOTBUG_TASKNAME #__workflow_data=Not a bug
 -
-&NT_BUG_REPORT_ASSIGN Workflow Processes=role:codestaff
+&NT_BUG_REPORT_ASSIGN #__workflow_data=role:codestaff
 -
-&NT_BUG_REPORT_COMMENT Workflow Processes=Initial bug report
+&NT_BUG_REPORT_COMMENT #__workflow_data=Initial bug report
 -
-&NT_BUG_REPORT_DUE Workflow Processes=604800
+&NT_BUG_REPORT_DUE #__workflow_data=604800
 -
-&NT_BUG_REPORT_IACK Workflow Processes=Bug reported. Thanks.
+&NT_BUG_REPORT_IACK #__workflow_data=Bug reported. Thanks.
 -
-&NT_BUG_REPORT_IRT Workflow Processes=[name($player)] has reported a bug.
+&NT_BUG_REPORT_IRT #__workflow_data=[name($player)] has reported a bug.
 -
-&NT_BUG_REPORT_NEXT Workflow Processes=ok:WILLFIX fix:FIXED huh:HUH nofix:NOFIX notbug:NOTBUG norepr:NOREPR
+&NT_BUG_REPORT_NEXT #__workflow_data=ok:WILLFIX fix:FIXED huh:HUH nofix:NOFIX notbug:NOTBUG norepr:NOREPR
 -
-&NT_BUG_REPORT_TASKDESC Workflow Processes=$bug%r[repeat(-,78)]%r+do/ok $tid: acknowledge and queue for fix%r+doreply/huh $tid=<comment>: bounce back to submitting player for clarification%r+do/fix $tid: close as fixed%r+do/nofix $tid: reject as a no-fix%r+do/notbug $tid: reject as not a bug%r+do/norepr $tid: reject as non-reproducible
+&NT_BUG_REPORT_TASKDESC #__workflow_data=$bug%r[repeat(-,78)]%r+do/ok $tid: acknowledge and queue for fix%r+doreply/huh $tid=<comment>: bounce back to submitting player for clarification%r+do/fix $tid: close as fixed%r+do/nofix $tid: reject as a no-fix%r+do/notbug $tid: reject as not a bug%r+do/norepr $tid: reject as non-reproducible
 -
-&NT_BUG_REPORT_TASKNAME Workflow Processes=Bug from [name($player)]
+&NT_BUG_REPORT_TASKNAME #__workflow_data=Bug from [name($player)]
 -
-&NT_BUG_WILLFIX_ASSIGN Workflow Processes=role:codestaff
+&NT_BUG_WILLFIX_ASSIGN #__workflow_data=role:codestaff
 -
-&NT_BUG_WILLFIX_COMMENT Workflow Processes=Acknowledge bug for future fixing
+&NT_BUG_WILLFIX_COMMENT #__workflow_data=Acknowledge bug for future fixing
 -
-&NT_BUG_WILLFIX_DUE Workflow Processes=604800
+&NT_BUG_WILLFIX_DUE #__workflow_data=604800
 -
-&NT_BUG_WILLFIX_IACK Workflow Processes=Bug acknowledged.
+&NT_BUG_WILLFIX_IACK #__workflow_data=Bug acknowledged.
 -
-&NT_BUG_WILLFIX_NEXT Workflow Processes=fix:FIXED huh:HUH nofix:NOFIX notbug:NOTBUG norepr:NOREPR
+&NT_BUG_WILLFIX_NEXT #__workflow_data=fix:FIXED huh:HUH nofix:NOFIX notbug:NOTBUG norepr:NOREPR
 -
-&NT_BUG_WILLFIX_TASKDESC Workflow Processes=$bug%r[repeat(-,78)]%r+doreply/huh $tid=<comment>: bounce back to submitting player for clarification%r+do/fix $tid: close as fixed%r+do/nofix $tid: reject as a no-fix%r+do/notbug $tid: reject as not a bug%r+do/norepr $tid: reject as non-reproducible
+&NT_BUG_WILLFIX_TASKDESC #__workflow_data=$bug%r[repeat(-,78)]%r+doreply/huh $tid=<comment>: bounce back to submitting player for clarification%r+do/fix $tid: close as fixed%r+do/nofix $tid: reject as a no-fix%r+do/notbug $tid: reject as not a bug%r+do/norepr $tid: reject as non-reproducible
 -
-&NT_BUG_WILLFIX_TASKNAME Workflow Processes=Acknowledged bug from [name($player)]
+&NT_BUG_WILLFIX_TASKNAME #__workflow_data=Acknowledged bug from [name($player)]
 -
-&PT_BUG_CMBODY Workflow Processes=The bug you reported [switch( $node ,fixed,has been fixed,nofix,will not be fixed,notbug,is not actually a bug,norepr,cannot be reproduced)].%rSee '+job $pid' for details.%r[repeat(-,78)]%rOriginal bug report:%r$bug
+&PT_BUG_CMBODY #__workflow_data=The bug you reported [switch( $node ,fixed,has been fixed,nofix,will not be fixed,notbug,is not actually a bug,norepr,cannot be reproduced)].%rSee '+job $pid' for details.%r[repeat(-,78)]%rOriginal bug report:%r$bug
 -
-&PT_BUG_CMSUBJ Workflow Processes=Bug report
+&PT_BUG_CMSUBJ #__workflow_data=Bug report
 -
-&PT_BUG_DESC Workflow Processes=Bug reporting
+&PT_BUG_DESC #__workflow_data=Bug reporting
 -
-&PT_BUG_ENDS Workflow Processes=fixed nofix notbug norepr
+&PT_BUG_ENDS #__workflow_data=fixed nofix notbug norepr
 -
-&PT_BUG_IMBODY Workflow Processes=Thanks for your bug report. It will be looked at by the code staff, and you will receive +mail notifications as the staff decides what to do with it.%r%rYou can track the progress of this bug report with '+job $pid'.%r[repeat(-,78)]%r$bug
+&PT_BUG_IMBODY #__workflow_data=Thanks for your bug report. It will be looked at by the code staff, and you will receive +mail notifications as the staff decides what to do with it.%r%rYou can track the progress of this bug report with '+job $pid'.%r[repeat(-,78)]%r$bug
 -
-&PT_BUG_IMSUBJ Workflow Processes=Bug report
+&PT_BUG_IMSUBJ #__workflow_data=Bug report
 -
-&PT_BUG_START Workflow Processes=report
+&PT_BUG_START #__workflow_data=report
 -
 
 
 ##
 # SUGGEST
 ##
-&NT_SUGGEST_OK_COMMENT Workflow Processes=Completed suggestion
+&NT_SUGGEST_OK_COMMENT #__workflow_data=Completed suggestion
 -
-&NT_SUGGEST_OK_IACK Workflow Processes=Suggestion completed.
+&NT_SUGGEST_OK_IACK #__workflow_data=Suggestion completed.
 -
-&NT_SUGGEST_OK_TASKDESC Workflow Processes=[name($actor)] has closed out this suggestion.
+&NT_SUGGEST_OK_TASKDESC #__workflow_data=[name($actor)] has closed out this suggestion.
 -
-&NT_SUGGEST_OK_TASKNAME Workflow Processes=Suggestion completed
+&NT_SUGGEST_OK_TASKNAME #__workflow_data=Suggestion completed
 -
-&NT_SUGGEST_REQUEST_ASSIGN Workflow Processes=org:WIZ
+&NT_SUGGEST_REQUEST_ASSIGN #__workflow_data=org:WIZ
 -
-&NT_SUGGEST_REQUEST_COMMENT Workflow Processes=Suggestion
+&NT_SUGGEST_REQUEST_COMMENT #__workflow_data=Suggestion
 -
-&NT_SUGGEST_REQUEST_DUE Workflow Processes=7776000
+&NT_SUGGEST_REQUEST_DUE #__workflow_data=7776000
 -
-&NT_SUGGEST_REQUEST_IACK Workflow Processes=Suggestion submitted.
+&NT_SUGGEST_REQUEST_IACK #__workflow_data=Suggestion submitted.
 -
-&NT_SUGGEST_REQUEST_IRT Workflow Processes=[name($player)] has submitted a suggestion.
+&NT_SUGGEST_REQUEST_IRT #__workflow_data=[name($player)] has submitted a suggestion.
 -
-&NT_SUGGEST_REQUEST_NEXT Workflow Processes=ok:OK
+&NT_SUGGEST_REQUEST_NEXT #__workflow_data=ok:OK
 -
-&NT_SUGGEST_REQUEST_TASKDESC Workflow Processes=$suggest%r[repeat(-,78)]%r+do/ok $tid: Close out request.%r+task/note $tid: Write a note that only staff can see.%r+task/reply $tid: Write a note to the player.
+&NT_SUGGEST_REQUEST_TASKDESC #__workflow_data=$suggest%r[repeat(-,78)]%r+do/ok $tid: Close out request.%r+task/note $tid: Write a note that only staff can see.%r+task/reply $tid: Write a note to the player.
 -
-&NT_SUGGEST_REQUEST_TASKNAME Workflow Processes=Suggestion from [name($player)]
+&NT_SUGGEST_REQUEST_TASKNAME #__workflow_data=Suggestion from [name($player)]
 -
-&PT_SUGGEST_DESC Workflow Processes=Suggestion
+&PT_SUGGEST_DESC #__workflow_data=Suggestion
 -
-&PT_SUGGEST_ENDS Workflow Processes=ok
+&PT_SUGGEST_ENDS #__workflow_data=ok
 -
-&PT_SUGGEST_IACK Workflow Processes=Your suggestion has been submitted. Thanks.
+&PT_SUGGEST_IACK #__workflow_data=Your suggestion has been submitted. Thanks.
 -
-&PT_SUGGEST_START Workflow Processes=request
+&PT_SUGGEST_START #__workflow_data=request
 -
 
 
 ##
 # TYPO
 ##
-&NT_TYPO_OK_COMMENT Workflow Processes=Completed typo report
+&NT_TYPO_OK_COMMENT #__workflow_data=Completed typo report
 -
-&NT_TYPO_OK_IACK Workflow Processes=Typo report completed.
+&NT_TYPO_OK_IACK #__workflow_data=Typo report completed.
 -
-&NT_TYPO_OK_TASKDESC Workflow Processes=[name($actor)] has closed out this typo report.
+&NT_TYPO_OK_TASKDESC #__workflow_data=[name($actor)] has closed out this typo report.
 -
-&NT_TYPO_OK_TASKNAME Workflow Processes=Typo report completed
+&NT_TYPO_OK_TASKNAME #__workflow_data=Typo report completed
 -
-&NT_TYPO_REQUEST_ASSIGN Workflow Processes=role:typo
+&NT_TYPO_REQUEST_ASSIGN #__workflow_data=role:typo
 -
-&NT_TYPO_REQUEST_COMMENT Workflow Processes=Typo report
+&NT_TYPO_REQUEST_COMMENT #__workflow_data=Typo report
 -
-&NT_TYPO_REQUEST_DUE Workflow Processes=1209600
+&NT_TYPO_REQUEST_DUE #__workflow_data=1209600
 -
-&NT_TYPO_REQUEST_IACK Workflow Processes=Typo report submitted.
+&NT_TYPO_REQUEST_IACK #__workflow_data=Typo report submitted.
 -
-&NT_TYPO_REQUEST_IRT Workflow Processes=[name($player)] has submitted a typo report.
+&NT_TYPO_REQUEST_IRT #__workflow_data=[name($player)] has submitted a typo report.
 -
-&NT_TYPO_REQUEST_NEXT Workflow Processes=ok:OK
+&NT_TYPO_REQUEST_NEXT #__workflow_data=ok:OK
 -
-&NT_TYPO_REQUEST_TASKDESC Workflow Processes=$typo%r[repeat(-,78)]%r+do/ok $tid: Close out request.%r+task/note $tid: Write a note that only staff can see.%r+task/reply $tid: Write a note to the player.
+&NT_TYPO_REQUEST_TASKDESC #__workflow_data=$typo%r[repeat(-,78)]%r+do/ok $tid: Close out request.%r+task/note $tid: Write a note that only staff can see.%r+task/reply $tid: Write a note to the player.
 -
-&NT_TYPO_REQUEST_TASKNAME Workflow Processes=Typo report from [name($player)]
+&NT_TYPO_REQUEST_TASKNAME #__workflow_data=Typo report from [name($player)]
 -
-&PT_TYPO_DESC Workflow Processes=Typo report
+&PT_TYPO_DESC #__workflow_data=Typo report
 -
-&PT_TYPO_ENDS Workflow Processes=ok
+&PT_TYPO_ENDS #__workflow_data=ok
 -
-&PT_TYPO_IACK Workflow Processes=Your typo report has been submitted. Thanks.
+&PT_TYPO_IACK #__workflow_data=Your typo report has been submitted. Thanks.
 -
-&PT_TYPO_START Workflow Processes=request
+&PT_TYPO_START #__workflow_data=request
 -
 
 ##
 # GM
 ##
-&NT_GM_OK_COMMENT Workflow Processes=Completed GM request
+&NT_GM_OK_COMMENT #__workflow_data=Completed GM request
 -
-&NT_GM_OK_IACK Workflow Processes=GM request completed.
+&NT_GM_OK_IACK #__workflow_data=GM request completed.
 -
-&NT_GM_OK_TASKDESC Workflow Processes=[name($actor)] has closed out this GM request.
+&NT_GM_OK_TASKDESC #__workflow_data=[name($actor)] has closed out this GM request.
 -
-&NT_GM_OK_TASKNAME Workflow Processes=GM request completed
+&NT_GM_OK_TASKNAME #__workflow_data=GM request completed
 -
-&NT_GM_REQUEST_ASSIGN Workflow Processes=role:gm
+&NT_GM_REQUEST_ASSIGN #__workflow_data=role:gm
 -
-&NT_GM_REQUEST_COMMENT Workflow Processes=GM request
+&NT_GM_REQUEST_COMMENT #__workflow_data=GM request
 -
-&NT_GM_REQUEST_DUE Workflow Processes=1209600
+&NT_GM_REQUEST_DUE #__workflow_data=1209600
 -
-&NT_GM_REQUEST_IACK Workflow Processes=GM request submitted.
+&NT_GM_REQUEST_IACK #__workflow_data=GM request submitted.
 -
-&NT_GM_REQUEST_IRT Workflow Processes=[name($player)] has submitted a GM request.
+&NT_GM_REQUEST_IRT #__workflow_data=[name($player)] has submitted a GM request.
 -
-&NT_GM_REQUEST_NEXT Workflow Processes=ok:OK
+&NT_GM_REQUEST_NEXT #__workflow_data=ok:OK
 -
-&NT_GM_REQUEST_TASKDESC Workflow Processes=$typo%r[repeat(-,78)]%r+do/ok $tid: Close out request.%r+task/note $tid: Write a note that only staff can see.%r+task/reply $tid: Write a note to the player.
+&NT_GM_REQUEST_TASKDESC #__workflow_data=$gm%r[repeat(-,78)]%r+do/ok $tid: Close out request.%r+task/note $tid: Write a note that only staff can see.%r+task/reply $tid: Write a note to the player.
 -
-&NT_GM_REQUEST_TASKNAME Workflow Processes=GM request from [name($player)]
+&NT_GM_REQUEST_TASKNAME #__workflow_data=GM request from [name($player)]
 -
-&PT_GM_DESC Workflow Processes=GM request
+&PT_GM_DESC #__workflow_data=GM request
 -
-&PT_GM_ENDS Workflow Processes=ok
+&PT_GM_ENDS #__workflow_data=ok
 -
-&PT_GM_IACK Workflow Processes=Your GM request has been submitted. Thanks.
+&PT_GM_IACK #__workflow_data=Your GM request has been submitted. Thanks.
 -
-&PT_GM_START Workflow Processes=request
+&PT_GM_START #__workflow_data=request
 -
 
 
