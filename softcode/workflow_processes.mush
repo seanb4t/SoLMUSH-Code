@@ -1,13 +1,14 @@
-@create Workflow Processes=10
+@@create Workflow Processes=10
 -
-@set Workflow Processes=HALTED
+@@set Workflow Processes=HALTED
 -
-@set Workflow Processes=SAFE
+@@set Workflow Processes=SAFE
 -
 &ROLE_CODESTAFF Workflow Processes=#3 #106
 -
 &ROLE_TYPO Workflow Processes=#3 #107
 -
+&ROLE_GM Workflow Processes=#3 #107 #106
 
 
 ##
@@ -193,3 +194,42 @@
 -
 &PT_TYPO_START Workflow Processes=request
 -
+
+##
+# GM
+##
+&NT_GM_OK_COMMENT Workflow Processes=Completed GM request
+-
+&NT_GM_OK_IACK Workflow Processes=GM request completed.
+-
+&NT_GM_OK_TASKDESC Workflow Processes=[name($actor)] has closed out this GM request.
+-
+&NT_GM_OK_TASKNAME Workflow Processes=GM request completed
+-
+&NT_GM_REQUEST_ASSIGN Workflow Processes=role:gm
+-
+&NT_GM_REQUEST_COMMENT Workflow Processes=GM request
+-
+&NT_GM_REQUEST_DUE Workflow Processes=1209600
+-
+&NT_GM_REQUEST_IACK Workflow Processes=GM request submitted.
+-
+&NT_GM_REQUEST_IRT Workflow Processes=[name($player)] has submitted a GM request.
+-
+&NT_GM_REQUEST_NEXT Workflow Processes=ok:OK
+-
+&NT_GM_REQUEST_TASKDESC Workflow Processes=$typo%r[repeat(-,78)]%r+do/ok $tid: Close out request.%r+task/note $tid: Write a note that only staff can see.%r+task/reply $tid: Write a note to the player.
+-
+&NT_GM_REQUEST_TASKNAME Workflow Processes=GM request from [name($player)]
+-
+&PT_GM_DESC Workflow Processes=GM request
+-
+&PT_GM_ENDS Workflow Processes=ok
+-
+&PT_GM_IACK Workflow Processes=Your GM request has been submitted. Thanks.
+-
+&PT_GM_START Workflow Processes=request
+-
+
+
+
