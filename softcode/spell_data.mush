@@ -1,16 +1,99 @@
 ## 
 # depends on datafactory.mush
-# depends on @reference #__factory
+# depends on @reference #__defs
 # depends on @reference #__meta
 ##
 
-&SPELL_DATA #__factory=name tier casttime description
+&SPELL_DATA #__defs=name tier casttime description flags
 -
-&SPELL_DEF #__factory=Unnamed Spell`1`1`Undescribed Spell
+
+&SPELL_DEF #__defs=Unnamed Spell`1`1`Undescribed Spell`witch_spell sorcerer_spell
 -
-&SPELL_FLAGS #__factory=witch_spell sorcerer_spell 
+
+&SPELL_FLAGS #__defs=witch_spell sorcerer_spell 
 -
-&SPELL_LABELS #__factory=Spell Name`Power Tier`Casting Time`Spell Description
+
+&SPELL_LABELS #__defs=Spell Name`Power Tier`Casting Time`Spell Description`Spell Flags
 -
-&SPELL_OBJ #__meta=#69
+
+&SPELL_OBJ #__meta=#130
 -
+
+##
+# Command: +spell/create spell_name=spell_description
+##
+&DO_SPELL_CREATE #__globals=
+    $+spell/create *=*:
+        @pemit %#=[
+            case(0,
+                isstaff(%#),Only staff may create spells.,
+                [datanew(%#,this,spell)]
+                [setq(this.name,trim(%0))]
+                [setq(this.description,trim(%1))]
+                [dataflagmod(this,witch_spell sorcerer_spell)]
+                [datasave(this,%#)]
+                New spell created: [ansi(c,%0)] - Spell ID: [r(this.id)]
+                )]
+-
+
+##
+# Command: +spell/show spell_id
+##
+&DO_SPELL_SHOW #__globals=
+    $+spell/show *:
+        @pemit %#=[
+            case(0,
+                dataload(this,spell,%0),That is not a valid ship ID.,
+                datashow(spell,this)
+            )]
+-
+
+##
+# Command: +spell/flag (!)witch_spell|(!)sorcerer_spell
+##
+&DO_SPELL_FLAG #__globals=
+    $^\+spell/flag (.+)=((!)?(witch|sorcerer)_spell)$:
+        @pemit %#=[
+            case(0,
+                isstaff(%#),Only staff can change the flags of a spell.,
+                dataload(this,spell,%1),That is not a valid spell ID.,
+                [dataflagmod(this,%2)]
+                [datasave(this,%#)]
+                You adjust the flags on spell: %xc[r(this.name)]%xn(%xb[r(this.id)]%xn)
+            )]
+-
+
+@set #__globals/do_spell_flag=regex
+-
+
+##
+# Command: +spells
+##
+&DO_SPELLS #__globals=
+    $+spells:@pemit %#=[u(SPELL_LIST_FN,spell)]
+-
+
+# Call as: ulocal(LIST_FN, type)
+# Returns: Displays a list of all entities for type
+# Side-effects: None.
+# 
+# %0 - type
+#
+&SPELL_LIST_FN #10=[localize(
+[setq(n,get(#__meta/%0_TOP))]
+[setq(l,lnum(1,%qn))]
+%xb[repeat(=,78)]%xn%r
+%xr[center(capstr(lcstr(%0)) List,78)]%xn%r
+%xb[repeat(=,78)]%xn%r
+%xr[ljust(ID,5)][ljust(Name,__defs)][ljust(W,4)][ljust(S,4)]%xn%r
+%xb[repeat(.,78)]%xn%r
+[iter(%ql,
+  [null(dataload(this,%0,##))]
+  [setq(w,nonzero(dataflagged(this,witch_spell),Y,N))]
+  [setq(s,nonzero(dataflagged(this,sorcerer_spell),Y,N))]
+  %xw[ljust(r(this.id),4)]%b[ljust(r(this.name),__defs)][ljust(%qw,4)][ljust(%qs,4)]%xn,,%r
+)]
+%r%xb[repeat(-,78)]%xn%r
+)]
+-
+

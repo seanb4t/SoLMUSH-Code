@@ -2,14 +2,3 @@
 # Depends on: #__globals
 ##
 
-##
-# ooc emit/pose/say command
-##
-&CMD_OOC #__globals=$^ooc ([\:;]?)(.+):@femit/spoof %#=[u(#__global_funcs/FUN_OOC_FMT,%#,%1,%2)]
--
-@set #__globals/cmd_ooc = regexp
--
-@fo me=&cmds_list #8=[sort(setunion(xget(#8,cmds_list),ooc))]
--
-&HELP_OOC #8=The '[ansi(c,ooc)]' command sends a message to other players in your room, prefixed with <<OOC>>. Poses are possible by prefixing your message with either ':' or ';'.
--
