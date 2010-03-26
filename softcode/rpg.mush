@@ -1,0 +1,57 @@
+## 
+# depends on @reference #__defs
+# depends on @reference #__rpg
+# depends on @reference #__rpg_funcs
+##
+
+&DO_ROLL_DIE #__rpg=$+roll/dice *d*:@remit loc(%#)=%xrRPG>%xn %N rolls %0d%1: [u(DICE_ROLL_FN,%0,%1)]
+-
+
+&DO_ROLL_PER #__rpg=$+roll/per:@remit loc(%#)=%xrRPG>%xn %N rolls (%xcPercentile%xn): [u(DICE_ROLL_FN,1,100)]
+-
+
+&DICE_ROLL_FN #__rpg_funcs=
+[localize(
+[case(
+  and(gt(%0,0),gt(%1,0)),
+  1,
+    die(%0,%1),
+  #-1 INVALID Roll Requested
+)]
+)]
+-
+
+&PERCENTILE_FUDGE_ADJ_FN #__rpg_funcs=
+[localize(
+  [iftrue(eq(%0,1),-4)]
+  [iftrue(and(gte(%0,2),lte(%0,6)),-3)]
+  [iftrue(and(gte(%0,7),lte(%0,18)),-2)]
+  [iftrue(and(gte(%0,19),lte(%0,38)),-1)]
+  [iftrue(and(gte(%0,39),lte(%0,62)),0)]
+  [iftrue(and(gte(%0,63),lte(%0,82)),1)]
+  [iftrue(and(gte(%0,83),lte(%0,94)),2)]
+  [iftrue(and(gte(%0,95),lte(%0,99)),3)]
+  [iftrue(eq(%0,100),4)]
+)]
+-
+
+&FUDGE_CHART #__rpg_funcs=Terrible`Poor`Mediocre`Fair`Good`Great`Superb`Legendary
+-
+
+&PERCENTILE_ADJ_TRAIT_FN #__rpg_funcs=
+[localize(
+  [setq(this.adj,u(PERCENTILE_FUDGE_ADJ_FN,%0))]
+  [setq(this.cur,member(v(FUDGE_CHART),capstr(lcstr(%1)),`))]
+  [setq(this.max,words(v(FUDGE_CHART),`))]
+  [setq(this.res,add(r(this.adj),r(this.cur)))]
+  [case(
+    [lt(r(this.res),0)]:[gt(r(this.res),r(this.max))],
+    0:0,extract(v(FUDGE_CHART),r(this.res),1,`),
+    0:1,extract(v(FUDGE_CHART),r(this.max),1,`),
+    1:0,extract(v(FUDGE_CHART),0,1,`),
+    ,
+    #-1
+  )]
+)]
+-
+
